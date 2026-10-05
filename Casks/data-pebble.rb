@@ -7,14 +7,13 @@ cask "data-pebble" do
   desc "Menu bar meter for Wi-Fi data use, with per-app estimates"
   homepage "https://github.com/aidanlowrie/data-pebble"
 
-  depends_on macos: ">= :sonoma"
+  depends_on macos: :sonoma
 
   app "Data Pebble.app"
 
-  # The app is ad-hoc signed, not notarised; clear quarantine so Gatekeeper allows it to open.
-  postflight do
-    system_command "/usr/bin/xattr",
-                   args: ["-dr", "com.apple.quarantine", "#{appdir}/Data Pebble.app"]
+  # The app is ad-hoc signed, not notarised; clear quarantine on the staged copy so Gatekeeper allows it to open.
+  preflight_steps do
+    run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "Data Pebble.app"], chdir: "."
   end
 
   uninstall quit: "local.aidan.DataPebble"
